@@ -14,12 +14,11 @@ body {
   padding: 15px 10px;
   background: white;
   z-index: 3;
-  /* z-index to add layers */
   width: 100%;
 }
 
-@media (min-width: 768px) {
+/* @media (min-width: 768px) {
   .add__new__btn__mobile__only {
     display: none;
   }
-}
+} */
