@@ -1,10 +1,14 @@
 const state = {
   taskList: [],
 };
+//storage unit for storing task
 
 // DOM - document object
 const taskContents = document.querySelector(".task__contents");
+// used to adding a new task to form fields
 const taskModal = document.querySelector(".task__modal__body");
+//used for pop up details/reference to body of madal (for a particular task)
+//query selectors for selecting classes
 
 const htmlTaskContent = ({ id, title, description, type, url }) => `
   <div class='col-md-6 col-lg-4 mt-3' id=${id} key=${id}>
@@ -21,8 +25,8 @@ const htmlTaskContent = ({ id, title, description, type, url }) => `
         ${url
     ? `<img width='100%' height='150px' style={{object-fit: cover; object-position: center}}  src=${url} alt='card image cap' class='card-image-top md-3 rounded-lg' />`
     : `
-      <img width='100%' height='150px' style={{object-fit: cover; object-position: center}} src="https://reactnativecode.com/wp-content/uploads/2018/02/Default_Image_Thumbnail.png" alt='card image cap' class='img-fluid place__holder__image mb-3' />
-      `
+            <img width='100%' height='150px' style={{object-fit: cover; object-position: center}} src="https://reactnativecode.com/wp-content/uploads/2018/02/Default_Image_Thumbnail.png" alt='card image cap' class='img-fluid place__holder__image mb-3' />
+          `
   }
         <h4 class='task__card__title'>${title}</h4>
         <p class='description trim-3-lines text-muted' data-gram_editor='false'>
@@ -87,27 +91,37 @@ const loadInitialData = () => {
     taskContents.insertAdjacentHTML("beforeend", htmlTaskContent(cardDate));
   });
 };
+//local storage only stores strings
+//array is stored in the form of string
+//object is also is stored in the form of string
 
+//on click of add task button this function handle submit is called
 const handleSubmit = (event) => {
   const id = `${Date.now()}`;
+  //getting current date and time
   const input = {
     url: document.getElementById("imageUrl").value,
     title: document.getElementById("taskTitle").value,
     description: document.getElementById("taskDescription").value,
     type: document.getElementById("tags").value,
   };
+  //getting values from form values
 
   if (input.title === "" || input.description === "" || input.type === "") {
     return alert("Please fill all the fields");
   }
+  //error if any feild is empty
 
   taskContents.insertAdjacentHTML(
     "beforeend",
     htmlTaskContent({
       ...input,
       id,
+      //spread operator , rather then showing input and id as an object ,we speard the data
+      //for more info check out image 1 in the images folder
     })
   );
+  //beforeend specifies the position when to insert html
 
   state.taskList.push({ ...input, id });
   updateLocalStorage();
@@ -121,7 +135,7 @@ const openTask = (e) => {
 };
 
 // delete functionality
-
+//on click of button in the htmltaskcontent function deletetask function is executed
 const deleteTask = (e) => {
   if (!e) e = window.event;
   // window.event is latest event that happend
@@ -164,6 +178,7 @@ const deleteTask = (e) => {
 const editTask = (e) => {
   if (!e) e = window.event;
 
+
   const targetID = e.target.id;
   const type = e.target.tagName;
 
@@ -172,6 +187,7 @@ const editTask = (e) => {
   let taskDescription;
   let taskType;
   let submitButton;
+  // creation of variables
 
   if (type === "BUTTON") {
     parentNode = e.target.parentNode.parentNode;
@@ -195,9 +211,12 @@ const editTask = (e) => {
   submitButton.setAttribute('onclick', "saveEdit.apply(this, arguments)");
   submitButton.removeAttribute("data-bs-toggle");
   submitButton.removeAttribute("data-bs-target");
+  //selecting oon click and removing attributes , which makes the button popup
 
 
   submitButton.innerText = "Save Changes";
+  //change the button name to save changes 
+  //calles saveEdit function
 };
 
 const saveEdit = (e) => {
@@ -211,14 +230,19 @@ const saveEdit = (e) => {
   const taskDescription = parentNode.childNodes[3].childNodes[5];
   const taskType = parentNode.childNodes[3].childNodes[7].childNodes[1];
   const submitButton = parentNode.childNodes[5].childNodes[1];
+  //gets the updated data
 
   const updateData = {
     taskTitle: taskTitle.innerHTML,
     taskDescription: taskDescription.innerHTML,
     taskType: taskType.innerHTML,
   }
+  //after getting data , we update state
 
   let stateCopy = state.taskList;
+
+  // creating copy of the state
+  // i.e copy of tasks in state copy variable
 
   stateCopy = stateCopy.map((task) =>
     task.id === targetID ?
@@ -259,7 +283,6 @@ const searchTask = (e) => {
 
   while (taskContents.firstChild) {
     taskContents.removeChild(taskContents.firstChild);
-    // 
   }
 
   const resultData = state.taskList.filter(({ title }) => {
@@ -272,4 +295,6 @@ const searchTask = (e) => {
   resultData.map((cardData) => {
     taskContents.insertAdjacentHTML('beforeend', htmlTaskContent(cardData));
   });
+  // after getting result data 
+  //mapping them to tasks context
 };
